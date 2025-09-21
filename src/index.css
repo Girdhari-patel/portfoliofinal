@@ -3,7 +3,7 @@
 
  html { scroll-behavior: smooth; }
 
- * Buttons: micro hover */
+  /* Buttons: micro hover */
 @media (prefers-reduced-motion: no-preference) {
   .btn-float { transition: transform .18s ease, box-shadow .18s ease; }
   .btn-float:hover { transform: translateY(-1px); }

@@ -1,5 +1,7 @@
  import React, { useEffect, useMemo, useState } from "react";
-import { Menu, MapPin, PhoneCall, Shield, Clock, Rocket, Smartphone, Truck, ArrowUpRight } from "lucide-react";
+import {
+  Menu, MapPin, PhoneCall, Shield, Clock, Rocket, Smartphone, Truck, ArrowUpRight
+} from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 /** ===== Brand (EDIT THESE) ===== */
@@ -11,6 +13,10 @@ const BRAND = {
   appStoreUrl: "#",
   playStoreUrl: "#",
   instagram: "#",
+  // optional brand colors (override classes if you want)
+  primary: "#e64b47",     // CTA red
+  borderTint: "#f3b3a6",  // warm card border
+  heading: "#3b2f2f",     // deep brown
 };
 
 /** ===== UI primitives ===== */
@@ -46,7 +52,10 @@ const Chip = ({ children, className = "" }) => (
 const CardShell = ({ children, className = "", gridBg = false }) => (
   <div
     className={["relative rounded-[28px] border bg-white", className].join(" ")}
-    style={{ borderColor: "#f3b3a6", boxShadow: "0 16px 40px -18px rgba(230,75,71,0.25)" }}
+    style={{
+      borderColor: BRAND.borderTint,
+      boxShadow: "0 16px 40px -18px rgba(230,75,71,0.28)",
+    }}
   >
     {gridBg && <div className="pointer-events-none absolute inset-0 opacity-20 grid-pan" />}
     <div className="relative">{children}</div>
@@ -70,7 +79,7 @@ const useAnims = () => {
     hidden: {},
     show: { transition: { staggerChildren: reduce ? 0 : 0.08, delayChildren: reduce ? 0 : 0.05 } },
   };
-  return { fadeUp, fade, stagger };
+  return { fadeUp, fade, stagger, reduce };
 };
 
 /** ===== Scroll Spy ===== */
@@ -91,6 +100,34 @@ function useScrollSpy(ids) {
   return active;
 }
 
+/** ===== Keyword scroller (CTA right) ===== */
+function KeywordScroller({ items = [] }) {
+  const { reduce } = useAnims();
+  // Duplicate list for seamless loop
+  const list = [...items, ...items];
+  if (reduce) {
+    // No animation when reduced motion preferred
+    return (
+      <ul className="space-y-2 text-2xl font-semibold opacity-80">
+        {items.map((t, i) => <li key={i}>{t}</li>)}
+      </ul>
+    );
+  }
+  return (
+    <div className="h-[220px] overflow-hidden">
+      <motion.div
+        aria-hidden="true"
+        initial={{ y: 0 }}
+        animate={{ y: ["0%", "-50%"] }}
+        transition={{ duration: 12, ease: "linear", repeat: Infinity }}
+        className="flex flex-col gap-2 text-2xl font-semibold opacity-80"
+      >
+        {list.map((t, i) => <div key={i}>{t}</div>)}
+      </motion.div>
+    </div>
+  );
+}
+
 /** ===== Sections ===== */
 function NavbarSticky() {
   const { fade } = useAnims();
@@ -107,24 +144,14 @@ function NavbarSticky() {
             {BRAND.name}
           </a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#about" className="hover:opacity-80">
-              About
-            </a>
-            <a href="#how" className="hover:opacity-80">
-              How it Works ?
-            </a>
-            <a href="#features" className="hover:opacity-80">
-              Features
-            </a>
-            <a href="#support" className="hover:opacity-80">
-              Contact
-            </a>
+            <a href="#about" className="hover:opacity-80">About</a>
+            <a href="#how" className="hover:opacity-80">How it Works ?</a>
+            <a href="#features" className="hover:opacity-80">Features</a>
+            <a href="#support" className="hover:opacity-80">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
             <a href={BRAND.playStoreUrl} target="_blank" rel="noreferrer">
-              <Button className="hidden sm:inline-flex bg-red-500 border-red-500">
-                Get App <ArrowUpRight className="w-4 h-4" />
-              </Button>
+              <Button className="hidden sm:inline-flex bg-red-500 border-red-500">Get App <ArrowUpRight className="w-4 h-4" /></Button>
             </a>
             <button className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border">
               <Menu className="w-5 h-5" />
@@ -178,7 +205,7 @@ function SectionAbout() {
               <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">
                 Easy to use • Process
               </span>
-              <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight" style={{ color: "#3b2f2f" }}>
+              <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight" style={{ color: BRAND.heading }}>
                 Got something urgent to send?
               </h1>
               <p className="mt-4 text-gray-600 text-lg">
@@ -187,26 +214,16 @@ function SectionAbout() {
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a href={BRAND.playStoreUrl} target="_blank" rel="noreferrer">
-                  <Button size="lg" className="bg-red-500 border-red-500">
-                    Play Store
-                  </Button>
+                  <Button size="lg" className="bg-red-500 border-red-500">Play Store</Button>
                 </a>
                 <a href={BRAND.appStoreUrl} target="_blank" rel="noreferrer">
-                  <Button size="lg" variant="outline">
-                    App Store
-                  </Button>
+                  <Button size="lg" variant="outline">App Store</Button>
                 </a>
               </div>
               <div className="mt-6 grid grid-cols-3 gap-3 text-sm text-gray-700">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4" /> Verified Travellers
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" /> On-time Delivery
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" /> Live Tracking
-                </div>
+                <div className="flex items-center gap-2"><Shield className="w-4 h-4" /> Verified Travellers</div>
+                <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> On-time Delivery</div>
+                <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Live Tracking</div>
               </div>
             </div>
             <div className="relative">
@@ -252,14 +269,9 @@ function SectionHowItWorks() {
       <CardShell className="p-0">
         <div className="p-8 lg:p-12">
           <div className="text-center mb-8">
-            <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">
-              Easy to use • Process
-            </span>
-            <h2 className="text-4xl font-extrabold mt-3" style={{ color: "#3b2f2f" }}>
-              How it works?
-            </h2>
+            <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">Easy to use • Process</span>
+            <h2 className="text-4xl font-extrabold mt-3" style={{ color: BRAND.heading }}>How it works?</h2>
           </div>
-
           <motion.div
             variants={stagger}
             initial="hidden"
@@ -269,9 +281,7 @@ function SectionHowItWorks() {
           >
             {steps.map((s) => (
               <motion.div key={s.n} variants={fadeUp} className="flex gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-rose-100 text-rose-700 font-bold flex items-center justify-center">
-                  {s.n}
-                </div>
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-rose-100 text-rose-700 font-bold flex items-center justify-center">{s.n}</div>
                 <div>
                   <h3 className="font-semibold text-lg">{s.title}</h3>
                   <p className="text-gray-600 text-sm mt-1">{s.desc}</p>
@@ -292,15 +302,10 @@ function SectionFeatures() {
       <div className="grid lg:grid-cols-2 gap-8 items-start">
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.35 }}>
           <CardShell gridBg className="p-8 lg:p-10">
-            <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">
-              Have Information • Every sec
-            </span>
-            <h3 className="text-3xl font-extrabold mt-3" style={{ color: "#3b2f2f" }}>
-              Real Time Tracking.
-            </h3>
+            <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">Have Information • Every sec</span>
+            <h3 className="text-3xl font-extrabold mt-3" style={{ color: BRAND.heading }}>Real Time Tracking.</h3>
             <p className="text-gray-600 mt-3">
-              Stay updated every step of the way with our real-time tracking feature, ensuring your package is always
-              within reach.
+              Stay updated every step of the way with our real-time tracking feature, ensuring your package is always within reach.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button variant="outline">Multiple Vehicle Options</Button>
@@ -311,15 +316,10 @@ function SectionFeatures() {
 
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.35 }}>
           <CardShell gridBg className="p-8 lg:p-10">
-            <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">
-              Fastest Time • Best in class
-            </span>
-            <h3 className="text-3xl font-extrabold mt-3" style={{ color: "#3b2f2f" }}>
-              On Time Delivery
-            </h3>
+            <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">Fastest Time • Best in class</span>
+            <h3 className="text-3xl font-extrabold mt-3" style={{ color: BRAND.heading }}>On Time Delivery</h3>
             <p className="text-gray-600 mt-3">
-              We prioritize punctuality with smart matching and route optimization so shipments arrive exactly when
-              expected.
+              We prioritize punctuality with smart matching and route optimization so shipments arrive exactly when expected.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button variant="outline">Fastest Service</Button>
@@ -341,7 +341,7 @@ function SectionSupport() {
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div>
               <span className="inline-flex px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-800">Call us • anytime</span>
-              <h3 className="text-3xl font-extrabold mt-3" style={{ color: "#3b2f2f" }}>Customer Support</h3>
+              <h3 className="text-3xl font-extrabold mt-3" style={{ color: BRAND.heading }}>Customer Support</h3>
               <ul className="mt-6 space-y-3 text-sm text-gray-700">
                 <li className="flex items-center gap-2"><PhoneCall className="w-4 h-4" /> {BRAND.phone}</li>
                 <li className="flex items-center gap-2"><Shield className="w-4 h-4" /> {BRAND.email}</li>
@@ -456,26 +456,24 @@ export default function App() {
                 <p className="mt-2 text-white/90">Download now and experience our unique services</p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a href={BRAND.appStoreUrl} target="_blank" rel="noreferrer">
-                    <Button variant="outline" className="border-white text-white hover:bg-white/10">
-                       App Store
-                    </Button>
+                    <Button variant="outline" className="border-white text-white hover:bg-white/10"> App Store</Button>
                   </a>
                   <a href={BRAND.playStoreUrl} target="_blank" rel="noreferrer">
-                    <Button variant="outline" className="border-white text-white hover:bg-white/10">
-                      ▶ Play Store
-                    </Button>
+                    <Button variant="outline" className="border-white text-white hover:bg-white/10">▶ Play Store</Button>
                   </a>
                 </div>
               </div>
-              <div className="opacity-70 hidden md:block">
-                <ul className="space-y-2 text-2xl font-semibold">
-                  <li>Courier carriers</li>
-                  <li>Delivery seekers</li>
-                  <li>Tourists</li>
-                  <li>Anytime Delivery</li>
-                  <li>Travelling Change</li>
-                  <li>Earn on the way</li>
-                </ul>
+              <div className="hidden md:block">
+                <KeywordScroller
+                  items={[
+                    "Courier carriers",
+                    "Delivery seekers",
+                    "Tourists",
+                    "Anytime Delivery",
+                    "Travelling Change",
+                    "Earn on the way",
+                  ]}
+                />
               </div>
             </div>
           </motion.div>
