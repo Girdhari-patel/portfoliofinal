@@ -1,3 +1,37 @@
  @import "tailwindcss";
 
+
  html { scroll-behavior: smooth; }
+
+ * Buttons: micro hover */
+@media (prefers-reduced-motion: no-preference) {
+  .btn-float { transition: transform .18s ease, box-shadow .18s ease; }
+  .btn-float:hover { transform: translateY(-1px); }
+}
+
+/* Scroll dots smoother */
+@media (prefers-reduced-motion: no-preference) {
+  .dot { transition: transform .18s ease, background-color .18s ease, border-color .18s ease; }
+}
+
+/* Floating FAB bob */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) }
+    50% { transform: translateY(-4px) }
+  }
+  .fab-bob { animation: bob 2.4s ease-in-out infinite; }
+}
+
+/* Subtle grid pan for feature cards */
+@media (prefers-reduced-motion: no-preference) {
+  .grid-pan {
+    background-image: radial-gradient(#000 0.5px, transparent 0.5px);
+    background-size: 16px 16px;
+    animation: gridPan 18s linear infinite;
+  }
+  @keyframes gridPan {
+    from { background-position: 0 0; }
+    to   { background-position: 16px 16px; }
+  }
+}
