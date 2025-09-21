@@ -35,3 +35,28 @@
     to   { background-position: 16px 16px; }
   }
 }
+
+/* --- Hero chips rail + bounce --- */
+.hero-rail {
+  position: relative;
+  border-top: 8px solid rgba(230, 75, 71, 0.18);
+  box-shadow: inset 0 12px 28px -20px rgba(230, 75, 71, 0.55);
+  border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes bobY {
+    0%, 100% { transform: translateY(0px) }
+    50% { transform: translateY(-6px) }
+  }
+  .chip-bob { animation: bobY 2.8s ease-in-out infinite; }
+  .chip-bob.delay-1 { animation-delay: .1s }
+  .chip-bob.delay-2 { animation-delay: .2s }
+  .chip-bob.delay-3 { animation-delay: .3s }
+  .chip-bob.delay-4 { animation-delay: .4s }
+  .chip-bob.delay-5 { animation-delay: .5s }
+  .chip-tilt-1 { transform: rotate(-9deg) }
+  .chip-tilt-2 { transform: rotate(-4deg) }
+  .chip-tilt-3 { transform: rotate(3deg) }
+  .chip-tilt-4 { transform: rotate(8deg) }
+}
